@@ -39,3 +39,30 @@ class MCP4725:
                 dac.setvol(3.0)
             finally:
                 self.deinit()
+
+class MCPsin:
+    def __init__(self, dynamic_range, address=0x61, verbose = True):
+        self.bus = smbus.SMBus(1)
+
+        self.address = address
+        self.wm = 0x00
+        self.pds = 0x00
+
+        self.verbose = verbose
+        self.dyrange = dynamic_range
+    def deinit(self):
+        self.bus.close()
+    def setvol(self, v):
+        try:
+            n=round(v/self.dyrange*2047)
+            b1 = self.wm | self.pds | n >> 8
+            b2 = n & 0xFF
+            self.bus.write_byte_data(self.address, b1, b2)
+        finally:
+            self.deinit()
+        if __name__ == '__main__':
+            try:
+                dac=MCP4725(5.0)
+                dac.setvol(3.0)
+            finally:
+                self.deinit()

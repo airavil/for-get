@@ -39,8 +39,11 @@ class PWM_DAC_sin:
         rpg.output(self.pin, 0)
         rpg.cleanup()
     def setvol(self, v):
-        p=rpg.PWM(self.pin, self.freq)
-        p.start(v)
+        try:
+            p=rpg.PWM(self.pin, self.freq)
+            p.start(v)
+        finally:
+            self.deinit()
         if __name__ == '__main__':
             try:
                 dac=PWM_DAC(12, 500, 3.1, True)
